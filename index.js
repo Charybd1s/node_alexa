@@ -1,10 +1,23 @@
-const express = require('express')
-const path = require('path')
-const PORT = process.env.PORT || 5000
+var express = require('express')
+    ,app = express()
+    ,last_value;
 
-express()
-  .use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+app.set('port', (process.env.PORT || 5000));
+
+app.get('/', function (req, res) {
+  if(req.query.command == ""){
+	res.send("{ \"command\":\"" + last_value + "\"}");
+  }else{
+	if(req.query.command == "empty"){
+		last_value = "";
+		res.send("{}");
+	}else{
+		res.send("{ \"command\":\"" + req.query.command + "\"}");
+		last_value = req.query.command;
+	}
+  }
+})
+
+app.listen(app.get('port'), function () {
+  console.log("Node app is running on port', app.get('port')");
+})
